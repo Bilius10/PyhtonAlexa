@@ -1,0 +1,9 @@
+Comando Geral: "Alexa"
+
+Comando 1: "Navegar na internet"
+subComando1: "Qual site quer entrar?"
+
+comando 2: "Abrir Aplicativo"
+subComando1: "Qual Aplicativo quer abrir?"
+
+comando 3: "Desligar Computador"
