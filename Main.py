@@ -19,9 +19,6 @@ def navegarInternet(site :str):
 def abrirAplicativo(app :str):
     auto.press('win')
     time.sleep(2)
-    auto.write('opera')
-    auto.press('enter')
-    time.sleep(2)
     auto.write(app)
     auto.press('enter')
 
