@@ -45,20 +45,46 @@ class ComputadorRemotoIntentHandler(AbstractRequestHandler):
         desligar = ask_utils.get_slot_value(handler_input, "desligarcomputador")
 
         if site:
+        try:
             speak_output = f"Acessando o site {site} no seu computador."
-        elif app:
-            speak_output = f"Abrindo o aplicativo {app} no seu computador."
-        elif desligar:
-            speak_output = "Desligando o computador."
-        else:
-            speak_output = "Desculpe, não entendi o que você quer fazer. Pode repetir?"
+            response = requests.get(
+                f"https://-----------/navegarInternet/{site}",
+                auth=HTTPBasicAuth("-----------")  
+            )
+            response.raise_for_status()  
+        except requests.exceptions.RequestException:
+            speak_output = f"Erro ao acessar o site {site} no seu computador."
+                
+    elif app:
+        try:
+            speak_output = f"Acessando o app {app} no seu computador."
+            response = requests.get(
+                f"https://-----------/abrirAplicativo/{app}",
+                auth=HTTPBasicAuth("-----------")  
+            )
+            response.raise_for_status() 
+        except requests.exceptions.RequestException:
+            speak_output = f"Erro ao acessar o aplicativo {app} no seu computador."
+                
+    elif desligar:
+        try:
+            speak_output = "Desligando o seu computador."
+            response = requests.get(
+                "https://-----------/desligarComputador",
+                auth=HTTPBasicAuth("-----------")  
+            )
+            response.raise_for_status()  
+        except requests.exceptions.RequestException:
+            speak_output = "Erro ao desligar seu computador."
+                
+    else:
+        speak_output = "Desculpe, não entendi o que você quer fazer. Pode repetir?"
 
-        return (
-            handler_input.response_builder
-                .speak(speak_output)
-               
-                .response
-        )
+    return (
+        handler_input.response_builder
+            .speak(speak_output)
+            .response
+    )
 
 
 class HelpIntentHandler(AbstractRequestHandler):
