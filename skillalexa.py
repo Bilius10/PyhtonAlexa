@@ -15,14 +15,12 @@ logger.setLevel(logging.INFO)
 
 
 class LaunchRequestHandler(AbstractRequestHandler):
-    """Handler for Skill Launch."""
+    """Handler para o lançamento da Skill."""
     def can_handle(self, handler_input):
-      
-         return ask_utils.is_request_type("LaunchRequest")(handler_input)
+        return ask_utils.is_request_type("LaunchRequest")(handler_input)
 
     def handle(self, handler_input):
-       
-        speak_output = "Agora voce pode controlar seu computador"
+        speak_output = "Agora você pode controlar seu computador."
 
         return (
             handler_input.response_builder
@@ -33,69 +31,56 @@ class LaunchRequestHandler(AbstractRequestHandler):
 
 
 class ComputadorRemotoIntentHandler(AbstractRequestHandler):
-    """Handler for Hello World Intent."""
+    """Handler para o controle remoto do computador."""
     def can_handle(self, handler_input):
-      
         return ask_utils.is_intent_name("ComputadorRemotoIntent")(handler_input)
 
     def handle(self, handler_input):
-        
         site = ask_utils.get_slot_value(handler_input, "acessarsite")
         app = ask_utils.get_slot_value(handler_input, "acessarapp")
         desligar = ask_utils.get_slot_value(handler_input, "desligarcomputador")
 
         if site:
-        try:
-            speak_output = f"Acessando o site {site} no seu computador."
-            response = requests.get(
-                f"https://-----------/navegarInternet/{site}",
-                auth=HTTPBasicAuth("-----------")  
-            )
-            response.raise_for_status()  
-        except requests.exceptions.RequestException:
-            speak_output = f"Erro ao acessar o site {site} no seu computador."
-                
-    elif app:
-        try:
-            speak_output = f"Acessando o app {app} no seu computador."
-            response = requests.get(
-                f"https://-----------/abrirAplicativo/{app}",
-                auth=HTTPBasicAuth("-----------")  
-            )
-            response.raise_for_status() 
-        except requests.exceptions.RequestException:
-            speak_output = f"Erro ao acessar o aplicativo {app} no seu computador."
-                
-    elif desligar:
-        try:
-            speak_output = "Desligando o seu computador."
-            response = requests.get(
-                "https://-----------/desligarComputador",
-                auth=HTTPBasicAuth("-----------")  
-            )
-            response.raise_for_status()  
-        except requests.exceptions.RequestException:
-            speak_output = "Erro ao desligar seu computador."
-                
-    else:
-        speak_output = "Desculpe, não entendi o que você quer fazer. Pode repetir?"
+            try:
+                speak_output = f"Acessando o site {site} no seu computador."
+                response = requests.get(f"https://----------------/navegarInternet/{site}")
+                response.raise_for_status()
+            except requests.exceptions.RequestException:
+                speak_output = f"Erro ao acessar o site {site} no seu computador."
 
-    return (
-        handler_input.response_builder
-            .speak(speak_output)
-            .response
-    )
+        elif app:
+            try:
+                speak_output = f"Acessando o app {app} no seu computador."
+                response = requests.get(f"https://----------------//abrirAplicativo/{app}")
+                response.raise_for_status()
+            except requests.exceptions.RequestException:
+                speak_output = f"Erro ao acessar o aplicativo {app} no seu computador."
+
+        elif desligar:
+            try:
+                speak_output = "Desligando o seu computador."
+                response = requests.get("https://----------------//desligarComputador")
+                response.raise_for_status()
+            except requests.exceptions.RequestException:
+                speak_output = "Erro ao desligar seu computador."
+
+        else:
+            speak_output = "Desculpe, não entendi o que você quer fazer. Pode repetir?"
+
+        return (
+            handler_input.response_builder
+                .speak(speak_output)
+                .response
+        )
 
 
 class HelpIntentHandler(AbstractRequestHandler):
-    """Handler for Help Intent."""
+    """Handler para o pedido de ajuda."""
     def can_handle(self, handler_input):
-        
         return ask_utils.is_intent_name("AMAZON.HelpIntent")(handler_input)
 
     def handle(self, handler_input):
-        
-        speak_output = "You can say hello to me! How can I help?"
+        speak_output = "Você pode me dizer para acessar um site, abrir um app ou desligar o computador. Como posso ajudar?"
 
         return (
             handler_input.response_builder
@@ -106,15 +91,15 @@ class HelpIntentHandler(AbstractRequestHandler):
 
 
 class CancelOrStopIntentHandler(AbstractRequestHandler):
-    """Single handler for Cancel and Stop Intent."""
+    """Handler para Cancelar ou Parar."""
     def can_handle(self, handler_input):
-  
-        return (ask_utils.is_intent_name("AMAZON.CancelIntent")(handler_input) or
-                ask_utils.is_intent_name("AMAZON.StopIntent")(handler_input))
+        return (
+            ask_utils.is_intent_name("AMAZON.CancelIntent")(handler_input) or
+            ask_utils.is_intent_name("AMAZON.StopIntent")(handler_input)
+        )
 
     def handle(self, handler_input):
-       
-        speak_output = "Goodbye!"
+        speak_output = "Até logo!"
 
         return (
             handler_input.response_builder
@@ -122,68 +107,58 @@ class CancelOrStopIntentHandler(AbstractRequestHandler):
                 .response
         )
 
+
 class FallbackIntentHandler(AbstractRequestHandler):
-    """Single handler for Fallback Intent."""
+    """Handler para respostas inesperadas."""
     def can_handle(self, handler_input):
- 
         return ask_utils.is_intent_name("AMAZON.FallbackIntent")(handler_input)
 
     def handle(self, handler_input):
-     
-        logger.info("In FallbackIntentHandler")
-        speech = "Hmm, I'm not sure. You can say Hello or Help. What would you like to do?"
-        reprompt = "I didn't catch that. What can I help you with?"
+        logger.info("FallbackIntentHandler ativado")
+        speech = "Hmm, não tenho certeza. Você pode pedir ajuda ou tentar outro comando."
+        reprompt = "Não entendi. Em que posso te ajudar?"
 
-        return handler_input.response_builder.speak(speech).ask(reprompt).response
+        return (
+            handler_input.response_builder
+                .speak(speech)
+                .ask(reprompt)
+                .response
+        )
+
 
 class SessionEndedRequestHandler(AbstractRequestHandler):
-    """Handler for Session End."""
+    """Handler para o fim da sessão."""
     def can_handle(self, handler_input):
-
         return ask_utils.is_request_type("SessionEndedRequest")(handler_input)
 
     def handle(self, handler_input):
-
         return handler_input.response_builder.response
 
 
 class IntentReflectorHandler(AbstractRequestHandler):
-    """The intent reflector is used for interaction model testing and debugging.
-    It will simply repeat the intent the user said. You can create custom handlers
-    for your intents by defining them above, then also adding them to the request
-    handler chain below.
-    """
+    """Handler de teste que reflete o nome do intent disparado."""
     def can_handle(self, handler_input):
-        # type: (HandlerInput) -> bool
         return ask_utils.is_request_type("IntentRequest")(handler_input)
 
     def handle(self, handler_input):
-        # type: (HandlerInput) -> Response
         intent_name = ask_utils.get_intent_name(handler_input)
-        speak_output = "You just triggered " + intent_name + "."
+        speak_output = f"Você acabou de acionar o intent {intent_name}."
 
         return (
             handler_input.response_builder
                 .speak(speak_output)
-                # .ask("add a reprompt if you want to keep the session open for the user to respond")
                 .response
         )
 
 
 class CatchAllExceptionHandler(AbstractExceptionHandler):
-    """Generic error handling to capture any syntax or routing errors. If you receive an error
-    stating the request handler chain is not found, you have not implemented a handler for
-    the intent being invoked or included it in the skill builder below.
-    """
+    """Handler genérico para capturar erros e exceções."""
     def can_handle(self, handler_input, exception):
-        # type: (HandlerInput, Exception) -> bool
         return True
 
     def handle(self, handler_input, exception):
-        # type: (HandlerInput, Exception) -> Response
         logger.error(exception, exc_info=True)
-
-        speak_output = "Sorry, I had trouble doing what you asked. Please try again."
+        speak_output = "Desculpe, tive um problema ao tentar fazer o que você pediu. Tente novamente, por favor."
 
         return (
             handler_input.response_builder
@@ -193,6 +168,7 @@ class CatchAllExceptionHandler(AbstractExceptionHandler):
         )
 
 
+# Registro dos handlers na skill
 sb = SkillBuilder()
 
 sb.add_request_handler(LaunchRequestHandler())
@@ -201,8 +177,7 @@ sb.add_request_handler(HelpIntentHandler())
 sb.add_request_handler(CancelOrStopIntentHandler())
 sb.add_request_handler(FallbackIntentHandler())
 sb.add_request_handler(SessionEndedRequestHandler())
-sb.add_request_handler(IntentReflectorHandler()) # make sure IntentReflectorHandler is last so it doesn't override your custom intent handlers
-
+sb.add_request_handler(IntentReflectorHandler())
 sb.add_exception_handler(CatchAllExceptionHandler())
 
-lambda_handler = sb.lambda_handler()
+# Lambda handler
