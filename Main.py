@@ -37,6 +37,20 @@ def abrirAplicativo(app: str):
     auto.write(app)
     auto.press('enter')
 
+@app.get("/assistirVideo/{video}")
+def assirtirvideo(video: str):
+    auto.press('win')
+    time.sleep(2)
+    auto.write('opera')
+    auto.press('enter')
+    time.sleep(2)
+    auto.write("https://www.youtube.com")
+    auto.press('enter')
+    time.sleep(10)
+    auto.click(x=848, y=130)
+    auto.write(video)
+    auto.press('enter')
+
 @app.get("/desligarComputador")
 def deligarComputador():
     os.system("shutdown /s /t 1")

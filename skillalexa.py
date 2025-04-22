@@ -39,11 +39,12 @@ class ComputadorRemotoIntentHandler(AbstractRequestHandler):
         site = ask_utils.get_slot_value(handler_input, "acessarsite")
         app = ask_utils.get_slot_value(handler_input, "acessarapp")
         desligar = ask_utils.get_slot_value(handler_input, "desligarcomputador")
-
+        video = ask_utils.get_slot_value(handler_input, "assistirvideo")
+        
         if site:
             try:
                 speak_output = f"Acessando o site {site} no seu computador."
-                response = requests.get(f"https://----------------/navegarInternet/{site}")
+                response = requests.get(f"https://bilius10.loca.lt/navegarInternet/{site}")
                 response.raise_for_status()
             except requests.exceptions.RequestException:
                 speak_output = f"Erro ao acessar o site {site} no seu computador."
@@ -51,7 +52,7 @@ class ComputadorRemotoIntentHandler(AbstractRequestHandler):
         elif app:
             try:
                 speak_output = f"Acessando o app {app} no seu computador."
-                response = requests.get(f"https://----------------//abrirAplicativo/{app}")
+                response = requests.get(f"https://bilius10.loca.lt/abrirAplicativo/{app}")
                 response.raise_for_status()
             except requests.exceptions.RequestException:
                 speak_output = f"Erro ao acessar o aplicativo {app} no seu computador."
@@ -59,11 +60,19 @@ class ComputadorRemotoIntentHandler(AbstractRequestHandler):
         elif desligar:
             try:
                 speak_output = "Desligando o seu computador."
-                response = requests.get("https://----------------//desligarComputador")
+                response = requests.get("https://bilius10.loca.lt/desligarComputador")
                 response.raise_for_status()
             except requests.exceptions.RequestException:
                 speak_output = "Erro ao desligar seu computador."
-
+        
+        elif video:
+            try:
+                speak_output = f"Acessando o video {video} no seu computador."
+                response = requests.get(f"https://bilius10.loca.lt/assistirVideo/{video}")
+                response.raise_for_status()
+            except requests.exceptions.RequestException:
+                speak_output = f"Erro ao acessar o video {video} no seu computador."
+                
         else:
             speak_output = "Desculpe, não entendi o que você quer fazer. Pode repetir?"
 
@@ -80,7 +89,7 @@ class HelpIntentHandler(AbstractRequestHandler):
         return ask_utils.is_intent_name("AMAZON.HelpIntent")(handler_input)
 
     def handle(self, handler_input):
-        speak_output = "Você pode me dizer para acessar um site, abrir um app ou desligar o computador. Como posso ajudar?"
+        speak_output = "Você pode me dizer para acessar um site, abrir um app, desligar o computador ou assistir um video. Como posso ajudar?"
 
         return (
             handler_input.response_builder
@@ -181,3 +190,4 @@ sb.add_request_handler(IntentReflectorHandler())
 sb.add_exception_handler(CatchAllExceptionHandler())
 
 # Lambda handler
+lambda_handler = sb.lambda_handler()
